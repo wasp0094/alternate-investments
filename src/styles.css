@@ -1,0 +1,124 @@
+/* Design tokens — values taken from the ALTERNATE pen.dev canvas */
+:root {
+  --ground: #16130f;
+  --ground-deep: #0e0d0b;
+  --surface: #1a1611;
+  --surface-2: #1c1813;
+  --surface-3: #1e1a15;
+  --raised: #241e17;
+  --raised-2: #2a2419;
+  --line: #2e2820;
+  --line-2: #3a3128;
+
+  --t1: #ede6d6;
+  --t1-bright: #f5f2ec;
+  --t2: #ada491;
+  --t3: #8c8474;
+  --t4: #6b6458;
+  --t5: #554e42;
+
+  --brass: #b8935b;
+  --brass-tint: #b8935b1f;
+  --brass-line: #b8935b4d;
+
+  --pos: #5fb49c;
+  --pos-tint: #5fb49c1f;
+  --neg: #c07a5e;
+  --neg-tint: #d4705c21;
+
+  --ui: 'Manrope', system-ui, sans-serif;
+  --display: 'Newsreader', Georgia, serif;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background: #0a0908;
+  color: var(--t1);
+  font-family: var(--ui);
+  font-size: 12px;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+input {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  outline: none;
+}
+
+.scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.hrail {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  scroll-snap-type: x proximity;
+}
+
+.hrail::-webkit-scrollbar {
+  display: none;
+}
+
+/* the faint sheen that runs across a value when it updates */
+@keyframes sheen {
+  from {
+    background-position: -140% 0;
+  }
+  to {
+    background-position: 240% 0;
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+  70% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
