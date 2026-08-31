@@ -10,7 +10,7 @@ import { TradeSheet } from './screens/TradeSheet'
 import { FilledSheet, OpenOrderSheet } from './screens/OrderResult'
 import { BuyoutReview, LockScreen, PayoutScreen, Toast } from './screens/Buyout'
 import { TabBar } from './components/TabBar'
-import { Backdrop, HomeIndicator, StatusBar, StatusScrim } from './components/ui'
+import { HomeIndicator, StatusBar, StatusScrim } from './components/ui'
 import { pushScreen, spring, tabSwap } from './motion'
 import { useApp } from './state'
 import { Stage } from './Stage'
@@ -71,7 +71,13 @@ function Screen() {
 
   return (
     <div style={{ position: 'absolute', inset: 0, background: 'var(--ground)', overflow: 'hidden' }}>
-      <AnimatePresence mode="wait" initial={false}>
+      {/*
+        Not mode="wait": Portfolio holds a looping pulse animation, and an exiting subtree with an
+        infinite animation never reports completion — which left the old tab on screen forever and
+        made tab switches (and Reset) look like they did nothing. Cross-fading both layers is also
+        the nicer transition; the outgoing one is inert via pointerEvents in the variants.
+      */}
+      <AnimatePresence initial={false}>
         <motion.div
           key={s.tab}
           variants={tabSwap}
@@ -109,8 +115,20 @@ function Screen() {
         )}
       </AnimatePresence>
 
+      <motion.div
+        animate={{ opacity: bottomSheet ? 1 : 0 }}
+        transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+        onClick={() => bottomSheet && d({ type: 'closeSheet' })}
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'rgba(11,9,8,0.72)',
+          zIndex: 60,
+          pointerEvents: bottomSheet ? 'auto' : 'none',
+        }}
+      />
+
       <AnimatePresence>
-        {bottomSheet && <Backdrop key="backdrop" onClick={() => d({ type: 'closeSheet' })} />}
         {sheet.kind === 'refine' && <RefineSheet key="refine" />}
         {sheet.kind === 'trade' && <TradeSheet key="trade" side={sheet.side} itemId={sheet.itemId} />}
         {sheet.kind === 'filled' && <FilledSheet key="filled" shares={sheet.shares} price={sheet.price} itemId={sheet.itemId} />}

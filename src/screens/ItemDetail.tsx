@@ -246,7 +246,7 @@ export function ItemDetail({ itemId }: { itemId: string }) {
         }}
       />
       <div style={{ position: 'absolute', top: 44, left: 0, right: 0, display: 'flex', alignItems: 'center', gap: 12, padding: '8px 20px', zIndex: 30 }}>
-        <CircleButton onClick={() => d({ type: 'back' })} label="‹" />
+        <CircleButton onClick={() => d({ type: 'back' })} label="‹" name="Back" />
         <motion.div style={{ flex: 1, opacity: navTitle, display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
           <div style={{ fontFamily: 'var(--display)', fontSize: 14, letterSpacing: '-0.17px' }}>{item.name}</div>
           {isSix && (
@@ -256,8 +256,8 @@ export function ItemDetail({ itemId }: { itemId: string }) {
           )}
         </motion.div>
         <div style={{ display: 'flex', gap: 10 }}>
-          <CircleButton label="↑" />
-          <CircleButton label={saved ? '★' : '☆'} active={saved} onClick={() => setSaved((v) => !v)} />
+          <CircleButton label="↑" name="Share" />
+          <CircleButton label={saved ? '★' : '☆'} active={saved} onClick={() => setSaved((v) => !v)} name={saved ? 'Saved' : 'Save'} />
         </div>
       </div>
 
@@ -326,11 +326,12 @@ export function ItemDetail({ itemId }: { itemId: string }) {
   )
 }
 
-function CircleButton({ label, onClick, active }: { label: string; onClick?: () => void; active?: boolean }) {
+function CircleButton({ label, onClick, active, name }: { label: string; onClick?: () => void; active?: boolean; name: string }) {
   return (
     <motion.button
       whileTap={{ scale: 0.88 }}
       onClick={onClick}
+      aria-label={name}
       style={{
         width: 36,
         height: 36,

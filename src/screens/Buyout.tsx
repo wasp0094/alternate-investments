@@ -47,13 +47,12 @@ export function LockScreen() {
             whileTap={{ scale: 0.985 }}
             onClick={() => {
               d({ type: 'lock', on: false })
+              d({ type: 'tab', tab: 'portfolio' })
               if (resolved) {
                 d({ type: 'buyout', stage: approved ? 'halted' : 'pending' })
-                d({ type: 'tab', tab: 'portfolio' })
               } else {
                 d({ type: 'buyout', stage: 'pending' })
                 d({ type: 'sheet', sheet: { kind: 'buyoutReview' } })
-                d({ type: 'tab', tab: 'portfolio' })
               }
             }}
             style={{
@@ -131,6 +130,7 @@ export function BuyoutReview() {
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={() => d({ type: 'closeSheet' })}
+            aria-label="Back"
             style={{ width: 34, height: 34, borderRadius: 999, background: 'var(--surface-3)', border: '1px solid var(--line)', display: 'grid', placeItems: 'center' }}
           >
             <Icon name="chevronLeft" size={16} color="var(--t1)" />
@@ -289,6 +289,7 @@ export function PayoutScreen() {
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={() => d({ type: 'closeSheet' })}
+            aria-label="Back"
             style={{ width: 34, height: 34, borderRadius: 999, background: 'var(--surface-3)', border: '1px solid var(--line)', display: 'grid', placeItems: 'center' }}
           >
             <Icon name="chevronLeft" size={16} color="var(--t1)" />

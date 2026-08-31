@@ -42,7 +42,9 @@ export function TradeSheet({ side, itemId }: { side: 'buy' | 'sell'; itemId: str
         {(['market', 'limit'] as const).map((t) => (
           <motion.button key={t} whileTap={press} onClick={() => setType(t)} style={{ position: 'relative', flex: 1, padding: '7px 10px', borderRadius: 999 }}>
             {type === t && <motion.span layoutId="order-type" transition={spring} style={{ position: 'absolute', inset: 0, borderRadius: 999, background: 'var(--line-2)' }} />}
-            <span style={{ position: 'relative', fontSize: 11.5, fontWeight: 600, color: type === t ? 'var(--t1)' : 'var(--t3)', textTransform: 'capitalize' }}>{t}</span>
+            <span style={{ position: 'relative', fontSize: 11.5, fontWeight: 600, color: type === t ? 'var(--t1)' : 'var(--t3)' }}>
+              {t === 'market' ? 'Market' : 'Limit'}
+            </span>
           </motion.button>
         ))}
       </div>
@@ -227,6 +229,7 @@ function StepButton({ icon, onClick }: { icon: 'minus' | 'plus'; onClick: () => 
     <motion.button
       whileTap={{ scale: 0.88, backgroundColor: '#3a3128' }}
       onClick={onClick}
+      aria-label={icon === 'minus' ? 'Decrease' : 'Increase'}
       style={{ width: 38, height: 38, borderRadius: 999, background: 'var(--raised)', border: '1px solid var(--line)', display: 'grid', placeItems: 'center', flexShrink: 0 }}
     >
       <Icon name={icon} size={15} color="var(--t1)" />

@@ -67,14 +67,15 @@ type Action =
 
 function reducer(s: State, a: Action): State {
   switch (a.type) {
+    // any navigation also puts the lock screen away — it used to stay up over the app
     case 'tab':
-      return { ...s, tab: a.tab, detail: null, sheet: { kind: 'none' } }
+      return { ...s, tab: a.tab, detail: null, sheet: { kind: 'none' }, lockScreen: false }
     case 'open':
-      return { ...s, detail: a.itemId }
+      return { ...s, detail: a.itemId, lockScreen: false }
     case 'back':
       return { ...s, detail: null }
     case 'sheet':
-      return { ...s, sheet: a.sheet }
+      return { ...s, sheet: a.sheet, lockScreen: false }
     case 'closeSheet':
       return { ...s, sheet: { kind: 'none' } }
     case 'buy':

@@ -37,6 +37,7 @@ export function Portfolio() {
         </div>
         <motion.button
           whileTap={press}
+          aria-label="Statements"
           style={{ width: 34, height: 34, borderRadius: 999, background: 'var(--surface-3)', border: '1px solid var(--line)', display: 'grid', placeItems: 'center' }}
         >
           <Icon name="fileText" size={15} color="var(--t1)" />

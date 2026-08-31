@@ -58,8 +58,10 @@ export function StatusScrim() {
       style={{
         position: 'absolute',
         inset: '0 0 auto 0',
-        height: 50,
-        background: 'linear-gradient(180deg, #16130f 0%, #16130f00 100%)',
+        // taller and solid behind the clock: in a live prototype the page scrolls under this,
+        // and the design's 50px fade let content read through the status bar
+        height: 68,
+        background: 'linear-gradient(180deg, #16130f 0%, #16130f 44%, #16130f00 100%)',
         zIndex: 15,
         pointerEvents: 'none',
       }}

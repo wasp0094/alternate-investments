@@ -63,6 +63,7 @@ export function Explore() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.7 }}
                 onClick={() => setQuery('')}
+                aria-label="Clear search"
               >
                 <Icon name="close" size={13} color="var(--t3)" />
               </motion.button>
@@ -72,6 +73,7 @@ export function Explore() {
         <motion.button
           whileTap={{ scale: 0.92, rotate: -8 }}
           onClick={() => d({ type: 'sheet', sheet: { kind: 'refine' } })}
+          aria-label="Refine"
           style={{ width: 44, height: 44, borderRadius: 999, background: 'var(--brass)', display: 'grid', placeItems: 'center', flexShrink: 0 }}
         >
           <Icon name="sliders" size={17} color="var(--ground)" />

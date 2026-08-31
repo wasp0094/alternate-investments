@@ -37,6 +37,7 @@ export function Dashboard() {
               key={n}
               whileTap={press}
               onClick={() => (n === 'search' ? d({ type: 'tab', tab: 'explore' }) : undefined)}
+              aria-label={n === 'search' ? 'Search' : 'Notifications'}
               style={{
                 position: 'relative',
                 width: 34,

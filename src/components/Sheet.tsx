@@ -55,6 +55,7 @@ export function Sheet({
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={onClose}
+            aria-label="Close"
             style={{ width: 28, height: 28, borderRadius: 999, background: 'var(--raised)', display: 'grid', placeItems: 'center' }}
           >
             <Icon name="close" size={14} color="var(--t3)" />

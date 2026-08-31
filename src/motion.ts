@@ -6,18 +6,26 @@ export const softSpring: Transition = { type: 'spring', stiffness: 260, damping:
 export const sheetSpring: Transition = { type: 'spring', stiffness: 340, damping: 34, mass: 0.85 }
 export const quick: Transition = { duration: 0.18, ease: [0.22, 1, 0.36, 1] }
 
-/** Push / pop between full screens, the way a nav stack behaves. */
+/**
+ * Push / pop between full screens, the way a nav stack behaves.
+ * The pop exits all the way off-screen: a partial exit (x:'35%', opacity:0.6) is what a
+ * *covered* screen does, and it left the detail hanging over the tab it returned to.
+ */
 export const pushScreen: Variants = {
-  initial: { x: '100%', opacity: 1 },
-  animate: { x: 0, opacity: 1 },
-  exit: { x: '35%', opacity: 0.6, filter: 'brightness(0.6)' },
+  initial: { x: '100%', pointerEvents: 'none' },
+  animate: { x: 0, pointerEvents: 'auto', transition: { type: 'spring', stiffness: 420, damping: 38, mass: 0.9 } },
+  exit: { x: '100%', pointerEvents: 'none', transition: { duration: 0.26, ease: [0.4, 0, 0.2, 1] } },
 }
 
-/** Tab switches cross-fade with a touch of lift rather than sliding. */
+/**
+ * Tab switches cross-fade with a touch of lift rather than sliding.
+ * `pointerEvents` is part of the variants on purpose: an exiting layer must never be able to
+ * swallow taps, even in the frame before it unmounts.
+ */
 export const tabSwap: Variants = {
-  initial: { opacity: 0, y: 8, scale: 0.99 },
-  animate: { opacity: 1, y: 0, scale: 1 },
-  exit: { opacity: 0, y: -6, scale: 0.995 },
+  initial: { opacity: 0, y: 8, scale: 0.99, pointerEvents: 'none' },
+  animate: { opacity: 1, y: 0, scale: 1, pointerEvents: 'auto' },
+  exit: { opacity: 0, y: -6, scale: 0.995, pointerEvents: 'none' },
 }
 
 export const sheetIn: Variants = {
