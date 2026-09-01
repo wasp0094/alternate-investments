@@ -47,12 +47,14 @@ export function LockScreen() {
             whileTap={{ scale: 0.985 }}
             onClick={() => {
               d({ type: 'lock', on: false })
-              if (resolved) {
-                d({ type: 'buyout', stage: approved ? 'halted' : 'pending' })
-                if (approved) d({ type: 'open', itemId: 'six' })
-                else d({ type: 'tab', tab: 'portfolio' })
+              // tab first: it clears the detail and any sheet left over from the vote
+              d({ type: 'tab', tab: 'portfolio' })
+              if (resolved && approved) {
+                d({ type: 'buyout', stage: 'paid' })
+                d({ type: 'sheet', sheet: { kind: 'payout' } })
+              } else if (resolved) {
+                d({ type: 'buyout', stage: 'pending' })
               } else {
-                d({ type: 'tab', tab: 'portfolio' })
                 d({ type: 'buyout', stage: 'pending' })
                 d({ type: 'sheet', sheet: { kind: 'buyoutReview' } })
               }

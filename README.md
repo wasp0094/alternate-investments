@@ -16,6 +16,7 @@ prototype can't reach by tapping alone.
 
 | Flow | Path |
 | --- | --- |
+| Open | Splash → dashboard (auto-dismisses after ~1.9s, tap to skip; deep links go straight in) |
 | Browse | Dashboard → item detail → back, tab switching, category chips |
 | Discover | Explore → live search, quick filters, refine sheet (chips + drag slider) |
 | Trade | Item detail → Buy/Sell ticket → market or limit → filled receipt / resting order |
@@ -77,8 +78,8 @@ src/
     Sheet.tsx          draggable bottom sheet
     PriceChart.tsx     scrubbable price chart
     TabBar.tsx
-  screens/             Dashboard, Explore, ItemDetail, Portfolio, Account,
-                       TradeSheet, OrderResult, RefineSheet, Buyout
+  screens/             Splash, Dashboard, Explore, ItemDetail, ItemClosed, Portfolio,
+                       Account, TradeSheet, OrderResult, RefineSheet, Buyout
 public/img/            the 12 photographs from the canvas
 ```
 

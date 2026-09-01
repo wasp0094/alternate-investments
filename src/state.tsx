@@ -37,6 +37,7 @@ type State = {
   sixShares: number
   toast: Toast
   orderCount: number
+  splash: boolean
 }
 
 const initial: State = {
@@ -49,6 +50,7 @@ const initial: State = {
   sixShares: 12,
   toast: null,
   orderCount: 0,
+  splash: true,
 }
 
 type Action =
@@ -63,6 +65,7 @@ type Action =
   | { type: 'buyout'; stage: BuyoutStage }
   | { type: 'vote'; vote: Vote }
   | { type: 'toast'; toast: Toast }
+  | { type: 'splashDone' }
   | { type: 'reset' }
 
 function reducer(s: State, a: Action): State {
@@ -71,7 +74,8 @@ function reducer(s: State, a: Action): State {
     case 'tab':
       return { ...s, tab: a.tab, detail: null, sheet: { kind: 'none' }, lockScreen: false }
     case 'open':
-      return { ...s, detail: a.itemId, lockScreen: false }
+      // clear the sheet too: a stale full-screen sheet would otherwise sit over the item page
+      return { ...s, detail: a.itemId, sheet: { kind: 'none' }, lockScreen: false }
     case 'back':
       return { ...s, detail: null }
     case 'sheet':
@@ -98,6 +102,8 @@ function reducer(s: State, a: Action): State {
       return { ...s, vote: a.vote, buyout: a.vote ? 'voted' : 'pending' }
     case 'toast':
       return { ...s, toast: a.toast }
+    case 'splashDone':
+      return { ...s, splash: false }
     case 'reset':
       return initial
     default:
@@ -111,7 +117,7 @@ const Ctx = createContext<{ s: State; d: React.Dispatch<Action> } | null>(null)
 function fromUrl(): State {
   if (typeof window === 'undefined') return initial
   const q = new URLSearchParams(window.location.search)
-  const st = { ...initial }
+  const st = { ...initial, splash: [...q.keys()].length === 0 }
   const tab = q.get('tab') as Tab | null
   if (tab && ['home', 'explore', 'portfolio', 'account'].includes(tab)) st.tab = tab
   const detail = q.get('detail')

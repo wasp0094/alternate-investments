@@ -9,6 +9,7 @@ import { RefineSheet } from './screens/RefineSheet'
 import { TradeSheet } from './screens/TradeSheet'
 import { FilledSheet, OpenOrderSheet } from './screens/OrderResult'
 import { BuyoutReview, LockScreen, PayoutScreen, Toast } from './screens/Buyout'
+import { Splash } from './screens/Splash'
 import { TabBar } from './components/TabBar'
 import { HomeIndicator, StatusBar, StatusScrim } from './components/ui'
 import { MobileNotice, useIsNarrow } from './components/MobileNotice'
@@ -149,6 +150,8 @@ function Screen() {
       <Toast />
 
       <AnimatePresence>{s.lockScreen && <LockScreen key="lock" />}</AnimatePresence>
+
+      <AnimatePresence>{s.splash && <Splash key="splash" onDone={() => d({ type: 'splashDone' })} />}</AnimatePresence>
 
       <StatusBar />
       <HomeIndicator />
