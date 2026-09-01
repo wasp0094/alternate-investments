@@ -65,12 +65,12 @@ export function Stage() {
     },
     {
       label: 'Item exited',
-      hint: 'Past holdings, item no longer tradable',
+      hint: 'The item page, no longer tradable',
       done: s.buyout === 'exited',
       active: stageIndex === 7,
       run: () => {
         d({ type: 'buyout', stage: 'exited' })
-        d({ type: 'tab', tab: 'portfolio' })
+        d({ type: 'open', itemId: 'six' })
       },
     },
   ]

@@ -1,24 +1,20 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion'
 import {
   BUYOUT,
   BUYOUT_HISTORY,
-  CERTIFICATE,
   DETAIL_TABS,
   DOCUMENTS,
   ITEMS,
-  ORDER_BOOK,
   PRESS,
-  PROVENANCE,
   RANGES,
   SHAREHOLDER_SPLIT,
   SPECIFICATIONS,
   STATS,
-  TRADING_RULES,
-  VALUATION,
 } from '../data'
 import { PriceChart } from '../components/PriceChart'
 import { Icon, Progress, Row } from '../components/ui'
+import { ItemClosed } from './ItemClosed'
 import { press, softSpring, spring } from '../motion'
 import { useApp } from '../state'
 
@@ -44,6 +40,8 @@ export function ItemDetail({ itemId }: { itemId: string }) {
     const deep = Number(new URLSearchParams(window.location.search).get('scroll') ?? 0)
     if (deep) scrollRef.current?.scrollTo({ top: deep })
   }, [itemId])
+
+  if (halted || exited) return <ItemClosed item={item} exited={exited} onBack={() => d({ type: 'back' })} />
 
   return (
     <div style={{ position: 'absolute', inset: 0 }}>
@@ -90,7 +88,7 @@ export function ItemDetail({ itemId }: { itemId: string }) {
               color: 'var(--brass)',
             }}
           >
-            {exited ? 'EXITED · 12 AUG 2026' : isSix ? 'Sports memorabilia' : item.category}
+            {isSix ? 'Sports memorabilia' : item.category}
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ ...softSpring, delay: 0.16 }} style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             <div style={{ fontFamily: 'var(--display)', fontSize: 34, letterSpacing: '-0.17px', lineHeight: 1.08 }}>{item.name}</div>
@@ -111,26 +109,6 @@ export function ItemDetail({ itemId }: { itemId: string }) {
       </div>
 
 
-      {/* banners */}
-      <AnimatePresence>
-        {halted && (
-          <Banner
-            key="halt"
-            icon="halt"
-            title="Trading halted — buyout in progress"
-            body="₹9.2 Cr offer approved on 12 Aug 2026 · payouts are being processed"
-          />
-        )}
-        {exited && (
-          <Banner
-            key="exit"
-            icon="lock"
-            title="EXITED · 12 Aug 2026"
-            body="This item was bought out on 12 Aug 2026 for ₹9.2 Cr. It's no longer tradable."
-          />
-        )}
-      </AnimatePresence>
-
       {/* price + chart */}
       <div style={{ padding: '22px 20px 32px', display: 'flex', flexDirection: 'column', gap: 22 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
@@ -139,20 +117,14 @@ export function ItemDetail({ itemId }: { itemId: string }) {
             <span style={{ fontSize: 36, fontWeight: 500, letterSpacing: '-1.2px' }}>{item.price.toLocaleString('en-IN')}</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-            {exited ? (
-              <span style={{ fontSize: 14, color: 'var(--t3)' }}>Final price ₹6,133 / share</span>
-            ) : (
-              <>
-                <Icon name="trendingUp" size={16} color={item.changePct >= 0 ? 'var(--pos)' : 'var(--neg)'} />
-                <span style={{ fontSize: 14, color: item.changePct >= 0 ? 'var(--pos)' : 'var(--neg)', letterSpacing: '-0.14px' }}>
-                  {item.changePct >= 0 ? '+₹11' : '−₹4'}
-                </span>
-                <span style={{ fontSize: 14, color: item.changePct >= 0 ? 'var(--pos)' : 'var(--neg)', letterSpacing: '-0.14px' }}>
-                  {item.changePct >= 0 ? '+' : ''}
-                  {item.changePct}% last session
-                </span>
-              </>
-            )}
+            <Icon name="trendingUp" size={16} color={item.changePct >= 0 ? 'var(--pos)' : 'var(--neg)'} />
+            <span style={{ fontSize: 14, color: item.changePct >= 0 ? 'var(--pos)' : 'var(--neg)', letterSpacing: '-0.14px' }}>
+              {item.changePct >= 0 ? '+₹11' : '−₹4'}
+            </span>
+            <span style={{ fontSize: 14, color: item.changePct >= 0 ? 'var(--pos)' : 'var(--neg)', letterSpacing: '-0.14px' }}>
+              {item.changePct >= 0 ? '+' : ''}
+              {item.changePct}% last session
+            </span>
           </div>
         </div>
 
@@ -226,7 +198,6 @@ export function ItemDetail({ itemId }: { itemId: string }) {
         </AnimatePresence>
       </div>
 
-      {tab === 0 && <Editorial />}
       </div>
 
       {/* pinned chrome — stays put while the page scrolls under it */}
@@ -283,47 +254,40 @@ export function ItemDetail({ itemId }: { itemId: string }) {
             <span style={{ fontSize: 12, color: 'var(--t3)' }}>/ share</span>
           </div>
           <span style={{ fontSize: 11, color: 'var(--t3)', letterSpacing: '-0.11px' }}>
-            {halted || exited ? 'Trading closed' : '47 available'}
+            47 available
           </span>
         </div>
         <motion.button
-          whileTap={halted || exited ? undefined : { scale: 0.96 }}
-          disabled={halted || exited}
-          onClick={() => d({ type: 'sheet', sheet: { kind: 'trade', side: 'sell', itemId: item.id } })}
-          style={{
-            height: 44,
-            padding: '12px 18px',
-            borderRadius: 4,
-            background: halted || exited ? 'var(--raised)' : '#d95e45',
-            border: `1px solid ${halted || exited ? 'var(--line)' : '#D4705C'}`,
-            fontSize: 15,
-            fontWeight: 600,
-            color: halted || exited ? 'var(--t4)' : '#fff',
-            cursor: halted || exited ? 'not-allowed' : 'pointer',
-          }}
-        >
-          Sell
-        </motion.button>
+              whileTap={{ scale: 0.96 }}
+              onClick={() => d({ type: 'sheet', sheet: { kind: 'trade', side: 'sell', itemId: item.id } })}
+              style={{ ...tradeButton, background: '#d95e45', border: '1px solid #d95e45' }}
+            >
+              Sell
+            </motion.button>
         <motion.button
-          whileTap={halted || exited ? undefined : { scale: 0.96 }}
-          disabled={halted || exited}
+          whileTap={{ scale: 0.96 }}
           onClick={() => d({ type: 'sheet', sheet: { kind: 'trade', side: 'buy', itemId: item.id } })}
-          style={{
-            flex: 1,
-            height: 44,
-            borderRadius: 4,
-            background: halted || exited ? 'var(--raised)' : '#60b57e',
-            fontSize: 15,
-            fontWeight: 600,
-            color: halted || exited ? 'var(--t4)' : '#fff',
-            cursor: halted || exited ? 'not-allowed' : 'pointer',
-          }}
+          style={{ ...tradeButton, background: '#60b57e', border: '1px solid #60b57e' }}
         >
-          {halted ? 'Trading halted' : exited ? 'Exited' : 'Buy'}
+          Buy
         </motion.button>
       </div>
     </div>
   )
+}
+
+/** Sell and Buy are peers: identical box, identical type, each taking half the row. */
+const tradeButton: CSSProperties = {
+  flex: 1,
+  height: 44,
+  borderRadius: 4,
+  fontSize: 15,
+  fontWeight: 600,
+  color: '#fff',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  cursor: 'pointer',
 }
 
 function CircleButton({ label, onClick, active, name }: { label: string; onClick?: () => void; active?: boolean; name: string }) {
@@ -423,55 +387,6 @@ function Overview({ holding, isSix }: { holding: number; isSix: boolean }) {
           </div>
         </motion.div>
       )}
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.88px', color: 'var(--t3)' }}>ORDER BOOK</span>
-          <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.88px', color: 'var(--t2)' }}>PRO ▾</span>
-        </div>
-        <div style={{ display: 'flex', gap: 12 }}>
-          {(['bids', 'asks'] as const).map((side) => (
-            <div key={side} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: 7 }}>
-                <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.7px', color: 'var(--t3)' }}>{side === 'bids' ? 'BID' : 'ASK'}</span>
-                <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.7px', color: 'var(--t3)' }}>QTY</span>
-              </div>
-              {ORDER_BOOK[side].map((r, i) => (
-                <div key={r.price} style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', padding: '7px 8px', borderRadius: 2, overflow: 'hidden' }}>
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${r.fill * 100}%` }}
-                    transition={{ ...softSpring, delay: 0.1 + i * 0.05 }}
-                    style={{ position: 'absolute', inset: 0, background: side === 'bids' ? '#5fb37e21' : '#d4705c21' }}
-                  />
-                  <span style={{ position: 'relative', fontSize: 12.5, color: side === 'bids' ? '#528980' : '#c46161', letterSpacing: '-0.12px' }}>{r.price}</span>
-                  <span style={{ position: 'relative', fontSize: 12.5, color: 'var(--t2)', letterSpacing: '-0.12px' }}>{r.qty}</span>
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: 12, borderTop: '1px solid #342d23' }}>
-          {ORDER_BOOK.meta.map((m) => (
-            <span key={m} style={{ fontSize: 11, color: 'var(--t3)' }}>
-              {m}
-            </span>
-          ))}
-        </div>
-        <p style={{ margin: 0, fontSize: 11, color: 'var(--t3)', lineHeight: 1.5 }}>
-          47 of 1,000 shares are on offer. A thin book is honest for a single object — we concentrate demand into one
-          weekly session rather than pretend to be continuous.
-        </p>
-      </div>
-
-      <div style={{ background: '#1e1a14', border: '1px solid #342d23', borderRadius: 4, padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 7 }}>
-        {TRADING_RULES.map((r) => (
-          <div key={r} style={{ display: 'flex', gap: 9 }}>
-            <span style={{ fontSize: 12, color: 'var(--t3)' }}>—</span>
-            <span style={{ fontSize: 12, color: 'var(--t2)', lineHeight: 1.45 }}>{r}</span>
-          </div>
-        ))}
-      </div>
     </>
   )
 }
@@ -638,109 +553,6 @@ function NewsTab() {
           <Icon name="arrowUpRight" size={14} color="var(--t3)" />
         </Row>
       ))}
-    </div>
-  )
-}
-
-/** The cream editorial slab — the one place the app leaves the dark palette. */
-function Editorial() {
-  return (
-    <div style={{ background: 'var(--t1)', color: 'var(--ground)' }}>
-      <div style={{ position: 'relative', height: 96, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(180deg, #16130f 0%, #ede6d6 100%)' }}>
-        <div style={{ position: 'absolute', left: 20, right: 20, top: '50%', height: 1, background: '#d8ceba' }} />
-        <div style={{ position: 'relative', padding: '0 14px', background: 'var(--t1)', fontSize: 11, fontWeight: 600, letterSpacing: '2.42px', color: '#6b6458' }}>
-          THE OBJECT
-        </div>
-      </div>
-
-      <div style={{ padding: '6px 20px 40px', display: 'flex', flexDirection: 'column', gap: 34 }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          <div style={{ fontFamily: 'var(--display)', fontSize: 27, lineHeight: 1.15, color: 'var(--ground)' }}>
-            A ball that left the ground
-            <br />
-            and never came back
-          </div>
-          <p style={{ margin: 0, fontSize: 15, color: '#554e42', lineHeight: 1.62 }}>
-            At 48.2 overs India needed four. Dhoni went down the ground off Nuwan Kulasekara and the ball cleared long-on
-            into the lower tier of the Wankhede — the first time a World Cup final had been won with a six.
-          </p>
-          <p style={{ margin: 0, fontSize: 15, color: '#554e42', lineHeight: 1.62 }}>
-            A stadium steward recovered it that night. It stayed in a private collection in Mumbai for eight years before
-            surfacing at auction. ALTERNATE acquired it in February 2024 and listed it a month later.
-          </p>
-        </div>
-
-        <div style={{ height: 1, background: '#d8ceba' }} />
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.88px', color: '#6b6458' }}>CHAIN OF CUSTODY</div>
-          <div>
-            {PROVENANCE.map((p, i) => (
-              <motion.div
-                key={p.date}
-                initial={{ opacity: 0, x: -8 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: '-40px' }}
-                transition={{ ...softSpring, delay: i * 0.05 }}
-                style={{ display: 'flex', gap: 14, paddingBottom: i === PROVENANCE.length - 1 ? 0 : 20 }}
-              >
-                <div style={{ width: 11, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, paddingTop: 4 }}>
-                  <span style={{ width: 9, height: 9, borderRadius: '50%', background: 'var(--t1)', border: '2px solid #7c6036', flexShrink: 0 }} />
-                  {i < PROVENANCE.length - 1 && <span style={{ width: 1, flex: 1, background: '#d8ceba' }} />}
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingBottom: 2 }}>
-                  <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.66px', color: '#6b6458' }}>{p.date}</span>
-                  <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--ground)' }}>{p.title}</span>
-                  <span style={{ fontSize: 13, color: '#554e42', lineHeight: 1.5 }}>{p.body}</span>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.88px', color: '#6b6458' }}>AUTHENTICATION</div>
-          <div style={{ background: '#f7f2e7', border: '1px solid #d8ceba', padding: 19, display: 'flex', flexDirection: 'column', gap: 14 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-                <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.88px', color: '#6b6458' }}>CERTIFICATE NO.</span>
-                <span style={{ fontSize: 12, color: 'var(--ground)', letterSpacing: '-0.12px' }}>{CERTIFICATE.no}</span>
-              </div>
-              <motion.div
-                initial={{ rotate: -12, scale: 0.85, opacity: 0 }}
-                whileInView={{ rotate: 0, scale: 1, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ type: 'spring', stiffness: 200, damping: 12 }}
-                style={{ width: 52, height: 52, borderRadius: 999, border: '1px solid #7c6036', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}
-              >
-                <span style={{ fontSize: 15, fontWeight: 700, color: '#7c6036' }}>✦</span>
-                <span style={{ fontSize: 7.5, fontWeight: 700, letterSpacing: '0.75px', color: '#7c6036' }}>VERIFIED</span>
-              </motion.div>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
-              {CERTIFICATE.rows.map((r) => (
-                <div key={r.label} style={{ display: 'flex', gap: 14, justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: 13, color: '#6b6458' }}>{r.label}</span>
-                  <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--ground)', textAlign: 'right', whiteSpace: 'pre-line' }}>{r.value}</span>
-                </div>
-              ))}
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12.5, color: '#7c6036' }}>View full certificate ↗</div>
-          </div>
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.88px', color: '#6b6458' }}>HOW WE VALUE THIS</div>
-          <div>
-            {VALUATION.map((v, i) => (
-              <div key={v.label} style={{ display: 'flex', justifyContent: 'space-between', padding: '11px 0', borderTop: i > 0 ? '1px solid #d8ceba' : undefined }}>
-                <span style={{ fontSize: 13, color: '#6b6458' }}>{v.label}</span>
-                <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--ground)' }}>{v.value}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
     </div>
   )
 }

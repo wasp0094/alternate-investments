@@ -80,7 +80,17 @@ export function FilledSheet({ shares, price, itemId }: { shares: number; price: 
 }
 
 /** Confirmation after a limit order rests on the book. */
-export function OpenOrderSheet({ shares, price, itemId }: { shares: number; price: number; itemId: string }) {
+export function OpenOrderSheet({
+  shares,
+  price,
+  itemId,
+  side = 'buy',
+}: {
+  shares: number
+  price: number
+  itemId: string
+  side?: 'buy' | 'sell'
+}) {
   const { d } = useApp()
   const item = ITEMS[itemId] ?? ITEMS.six
 
@@ -97,7 +107,7 @@ export function OpenOrderSheet({ shares, price, itemId }: { shares: number; pric
         </motion.div>
         <div style={{ fontFamily: 'var(--display)', fontSize: 22 }}>Open order</div>
         <div style={{ fontSize: 11.5, color: 'var(--t2)' }}>
-          Limit buy · {shares} shares of {item.name} at ₹{price}
+          Limit {side} · {shares} shares of {item.name} at ₹{price}
         </div>
       </div>
 
@@ -125,21 +135,21 @@ export function OpenOrderSheet({ shares, price, itemId }: { shares: number; pric
         </span>
       </div>
 
-      <div style={{ display: 'flex', gap: 10 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         <motion.button
-          whileTap={{ scale: 0.97 }}
+          whileTap={{ scale: 0.985 }}
           onClick={() => d({ type: 'closeSheet' })}
-          style={{ flex: 1, padding: '13px 16px', borderRadius: 4, border: '1px solid #C07A5E4D', fontSize: 12.5, fontWeight: 600, color: 'var(--neg)' }}
+          style={{ width: '100%', padding: '14px 16px', borderRadius: 4, border: '1px solid #C07A5E66', fontSize: 13, fontWeight: 600, color: '#C07A5E' }}
         >
           Cancel order
         </motion.button>
         <motion.button
-          whileTap={{ scale: 0.97 }}
+          whileTap={{ scale: 0.985 }}
           onClick={() => {
             d({ type: 'closeSheet' })
             d({ type: 'tab', tab: 'portfolio' })
           }}
-          style={{ flex: 1, padding: '13px 16px', borderRadius: 4, background: 'var(--raised)', border: '1px solid var(--line)', fontSize: 12.5, fontWeight: 600 }}
+          style={{ width: '100%', padding: '13px 16px', borderRadius: 4, border: '1px solid var(--line)', fontSize: 12.5, fontWeight: 600, color: 'var(--t3)' }}
         >
           View open orders
         </motion.button>

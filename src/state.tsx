@@ -19,7 +19,7 @@ export type Sheet =
   | { kind: 'none' }
   | { kind: 'trade'; side: 'buy' | 'sell'; itemId: string }
   | { kind: 'filled'; shares: number; price: number; itemId: string }
-  | { kind: 'openOrder'; shares: number; price: number; itemId: string }
+  | { kind: 'openOrder'; shares: number; price: number; itemId: string; side: 'buy' | 'sell' }
   | { kind: 'refine' }
   | { kind: 'buyoutReview' }
   | { kind: 'payout' }
@@ -58,7 +58,7 @@ type Action =
   | { type: 'sheet'; sheet: Sheet }
   | { type: 'closeSheet' }
   | { type: 'buy'; shares: number; price: number; itemId: string }
-  | { type: 'placeLimit'; shares: number; price: number; itemId: string }
+  | { type: 'placeLimit'; shares: number; price: number; itemId: string; side: 'buy' | 'sell' }
   | { type: 'lock'; on: boolean }
   | { type: 'buyout'; stage: BuyoutStage }
   | { type: 'vote'; vote: Vote }
@@ -88,7 +88,7 @@ function reducer(s: State, a: Action): State {
       return {
         ...s,
         orderCount: s.orderCount + 1,
-        sheet: { kind: 'openOrder', shares: a.shares, price: a.price, itemId: a.itemId },
+        sheet: { kind: 'openOrder', shares: a.shares, price: a.price, itemId: a.itemId, side: a.side },
       }
     case 'lock':
       return { ...s, lockScreen: a.on }
@@ -124,7 +124,7 @@ function fromUrl(): State {
   else if (sheet === 'sell') st.sheet = { kind: 'trade', side: 'sell', itemId }
   else if (sheet === 'refine') st.sheet = { kind: 'refine' }
   else if (sheet === 'filled') st.sheet = { kind: 'filled', shares: 12, price: 612, itemId }
-  else if (sheet === 'order') st.sheet = { kind: 'openOrder', shares: 12, price: 607, itemId }
+  else if (sheet === 'order') st.sheet = { kind: 'openOrder', shares: 12, price: 607, itemId, side: 'buy' }
   else if (sheet === 'buyoutReview') st.sheet = { kind: 'buyoutReview' }
   else if (sheet === 'payout') st.sheet = { kind: 'payout' }
   if (q.get('lock') === '1') st.lockScreen = true

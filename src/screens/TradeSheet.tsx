@@ -28,7 +28,7 @@ export function TradeSheet({ side, itemId }: { side: 'buy' | 'sell'; itemId: str
     setSubmitting(true)
     // a beat of "working" before the confirmation lands — the pause is what sells it
     setTimeout(() => {
-      if (type === 'limit' && !isSell) d({ type: 'placeLimit', shares, price: limit, itemId })
+      if (type === 'limit') d({ type: 'placeLimit', shares, price: limit, itemId, side })
       else d({ type: 'buy', shares: isSell ? -shares : shares, price: unit, itemId })
       setSubmitting(false)
     }, 780)
@@ -135,10 +135,10 @@ export function TradeSheet({ side, itemId }: { side: 'buy' | 'sell'; itemId: str
             />
             Placing order
           </>
-        ) : isSell ? (
-          'Review sell order'
         ) : type === 'limit' ? (
           'Place limit order'
+        ) : isSell ? (
+          'Review sell order'
         ) : (
           'Buy shares'
         )}

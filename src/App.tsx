@@ -136,7 +136,9 @@ function Screen() {
         {sheet.kind === 'refine' && <RefineSheet key="refine" />}
         {sheet.kind === 'trade' && <TradeSheet key="trade" side={sheet.side} itemId={sheet.itemId} />}
         {sheet.kind === 'filled' && <FilledSheet key="filled" shares={sheet.shares} price={sheet.price} itemId={sheet.itemId} />}
-        {sheet.kind === 'openOrder' && <OpenOrderSheet key="open" shares={sheet.shares} price={sheet.price} itemId={sheet.itemId} />}
+        {sheet.kind === 'openOrder' && (
+          <OpenOrderSheet key="open" shares={sheet.shares} price={sheet.price} itemId={sheet.itemId} side={sheet.side} />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>

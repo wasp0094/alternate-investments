@@ -47,10 +47,12 @@ export function LockScreen() {
             whileTap={{ scale: 0.985 }}
             onClick={() => {
               d({ type: 'lock', on: false })
-              d({ type: 'tab', tab: 'portfolio' })
               if (resolved) {
                 d({ type: 'buyout', stage: approved ? 'halted' : 'pending' })
+                if (approved) d({ type: 'open', itemId: 'six' })
+                else d({ type: 'tab', tab: 'portfolio' })
               } else {
+                d({ type: 'tab', tab: 'portfolio' })
                 d({ type: 'buyout', stage: 'pending' })
                 d({ type: 'sheet', sheet: { kind: 'buyoutReview' } })
               }
@@ -391,6 +393,7 @@ export function PayoutScreen() {
           onClick={() => {
             d({ type: 'closeSheet' })
             d({ type: 'buyout', stage: 'exited' })
+            d({ type: 'open', itemId: 'six' })
           }}
           style={{ flex: 1, padding: '14px 26px', borderRadius: 999, background: 'var(--pos)', fontSize: 13, fontWeight: 600, color: '#16130f' }}
         >

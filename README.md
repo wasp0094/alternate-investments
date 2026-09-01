@@ -22,6 +22,9 @@ prototype can't reach by tapping alone.
 | Hold | Portfolio → re-sortable holdings, allocation toggle, pending actions |
 | Exit | Buyout: push notification → review & vote → result → trading halted → payout → item exited |
 
+Once a buyout completes, the item page is replaced by its closed state — halted (with an inert
+CTA) or exited (final price, no trading) — rather than sending you back to the portfolio.
+
 Buying actually moves the numbers: shares land in the portfolio, the holding card on the item
 detail updates, and the totals recalculate.
 
@@ -91,5 +94,7 @@ they're treated as decided:
 - **Search results.** The Explore search field is live; the results list is a new layout.
 - **Sort and filter behaviour.** Holdings sorting, refine chips and the slider all recompute
   (object counts, minimum investment) rather than being static states.
-- **Limit-sell.** The canvas shows a market sell only; the limit path reuses the buy ticket's
-  copy pattern.
+- **Limit-sell.** The canvas shows a market sell only; a limit sell reuses the buy ticket's copy
+  and rests on the book like a limit buy.
+- **A back button on the closed item screens.** The canvas versions have no navigation at all,
+  which would strand you in the prototype.
