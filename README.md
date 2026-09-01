@@ -38,6 +38,13 @@ detail updates, and the totals recalculate.
 - Success pulses on fills and payouts; the attention banner breathes while a vote is open
 - `prefers-reduced-motion` collapses all of it
 
+## Mobile
+
+The layout renders the phone at true size next to the flow panel, so it needs about 900px of
+width. Below `900px` the app shows a short notice asking the viewer to open the link on a desktop
+browser instead of squashing the prototype. The switch is driven by `matchMedia`, so it follows a
+window resize or a device rotation live.
+
 ## Deep links
 
 State is readable from the URL, so any screen is shareable:

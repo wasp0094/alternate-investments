@@ -11,11 +11,15 @@ import { FilledSheet, OpenOrderSheet } from './screens/OrderResult'
 import { BuyoutReview, LockScreen, PayoutScreen, Toast } from './screens/Buyout'
 import { TabBar } from './components/TabBar'
 import { HomeIndicator, StatusBar, StatusScrim } from './components/ui'
+import { MobileNotice, useIsNarrow } from './components/MobileNotice'
 import { pushScreen, spring, tabSwap } from './motion'
 import { useApp } from './state'
 import { Stage } from './Stage'
 
 export function App() {
+  // the layout needs ~900px; on a phone say so instead of shipping something squashed
+  if (useIsNarrow()) return <MobileNotice />
+
   return (
     <div
       style={{
